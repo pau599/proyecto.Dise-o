@@ -61,32 +61,33 @@ public class LibroRepositoryDB implements LibroRepository {
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
-        }
+        }  
     }
 
-    public List<LibroDTO> obtenerTodos() {
-        List<LibroDTO> libros = new ArrayList<>();
-        String sql = "SELECT * FROM libros";
-        try (Connection conn = dataBaseConfig.getInstance().getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                libros.add(new LibroDTO(
-                        rs.getString("titulo"),
-                        rs.getString("autor"),
-                        rs.getInt("año"),
-                        rs.getString("genero"),
-                        rs.getString("fechaLectura"),
-                        rs.getInt("usuarioId")
-                ));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+public List<LibroDTO> obtenerTodos() {
+    List<LibroDTO> libros = new ArrayList<>();
+    String sql = "SELECT * FROM libros";
+    try (Connection conn = dataBaseConfig.getInstance().getConnection();
+         Statement stmt = conn.createStatement();
+         ResultSet rs = stmt.executeQuery(sql)) {
+        while (rs.next()) {
+            libros.add(new LibroDTO(
+                    rs.getString("titulo"),
+                    rs.getString("autor"),
+                    rs.getInt("año"),
+                    rs.getString("genero"),
+                    rs.getString("fechaLectura"),
+                    rs.getInt("usuarioId"),
+                    rs.getInt("IdLibro")
+            ));
         }
-        return libros;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
-    
-    public List<LibroDTO> obtenerTodosPorUsuario(int usuarioId) {
+    return libros;
+}
+
+public List<LibroDTO> obtenerTodosPorUsuario(int usuarioId) {
     List<LibroDTO> libros = new ArrayList<>();
     String sql = "SELECT * FROM libros WHERE usuarioId = ?";
     try (Connection conn = dataBaseConfig.getInstance().getConnection();
@@ -100,7 +101,8 @@ public class LibroRepositoryDB implements LibroRepository {
                         rs.getInt("año"),
                         rs.getString("genero"),
                         rs.getString("fechaLectura"),
-                        rs.getInt("usuarioId")
+                        rs.getInt("usuarioId"),
+                        rs.getInt("IdLibro")
                 ));
             }
         }
@@ -110,99 +112,115 @@ public class LibroRepositoryDB implements LibroRepository {
     return libros;
 }
 
-    public List<LibroDTO> buscarPorTitulo(String titulo) {
-        List<LibroDTO> libros = new ArrayList<>();
-        String sql = "SELECT * FROM libros WHERE titulo LIKE ?";
-        try (Connection conn = dataBaseConfig.getInstance().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, "%" + titulo + "%");
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    libros.add(new LibroDTO(
-                            rs.getString("titulo"),
-                            rs.getString("autor"),
-                            rs.getInt("año"),
-                            rs.getString("genero"),
-                            rs.getString("fechaLectura"),
-                            rs.getInt("usuarioId")
-                    ));
-                }
+public List<LibroDTO> buscarPorTitulo(String titulo) {
+    List<LibroDTO> libros = new ArrayList<>();
+    String sql = "SELECT * FROM libros WHERE titulo LIKE ?";
+    try (Connection conn = dataBaseConfig.getInstance().getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        stmt.setString(1, "%" + titulo + "%");
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                libros.add(new LibroDTO(
+                        rs.getString("titulo"),
+                        rs.getString("autor"),
+                        rs.getInt("año"),
+                        rs.getString("genero"),
+                        rs.getString("fechaLectura"),
+                        rs.getInt("usuarioId"),
+                        rs.getInt("IdLibro")
+                ));
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-        return libros;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+    return libros;
+}
 
-    public List<LibroDTO> filtrarPorAutor(String autor) {
-        List<LibroDTO> libros = new ArrayList<>();
-        String sql = "SELECT * FROM libros WHERE autor LIKE ?";
-        try (Connection conn = dataBaseConfig.getInstance().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, "%" + autor + "%");
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    libros.add(new LibroDTO(
-                            rs.getString("titulo"),
-                            rs.getString("autor"),
-                            rs.getInt("año"),
-                            rs.getString("genero"),
-                            rs.getString("fechaLectura"),
-                            rs.getInt("usuarioId")
-                    ));
-                }
+public List<LibroDTO> filtrarPorAutor(String autor) {
+    List<LibroDTO> libros = new ArrayList<>();
+    String sql = "SELECT * FROM libros WHERE autor LIKE ?";
+    try (Connection conn = dataBaseConfig.getInstance().getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        stmt.setString(1, "%" + autor + "%");
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                libros.add(new LibroDTO(
+                        rs.getString("titulo"),
+                        rs.getString("autor"),
+                        rs.getInt("año"),
+                        rs.getString("genero"),
+                        rs.getString("fechaLectura"),
+                        rs.getInt("usuarioId"),
+                        rs.getInt("IdLibro")
+                ));
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-        return libros;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+    return libros;
+}
 
-    public List<LibroDTO> filtrarPorGenero(String genero) {
-        List<LibroDTO> libros = new ArrayList<>();
-        String sql = "SELECT * FROM libros WHERE genero LIKE ?";
-        try (Connection conn = dataBaseConfig.getInstance().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, "%" + genero + "%");
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    libros.add(new LibroDTO(
-                            rs.getString("titulo"),
-                            rs.getString("autor"),
-                            rs.getInt("año"),
-                            rs.getString("genero"),
-                            rs.getString("fechaLectura"),
-                            rs.getInt("usuarioId")
-                    ));
-                }
+public List<LibroDTO> filtrarPorGenero(String genero) {
+    List<LibroDTO> libros = new ArrayList<>();
+    String sql = "SELECT * FROM libros WHERE genero LIKE ?";
+    try (Connection conn = dataBaseConfig.getInstance().getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        stmt.setString(1, "%" + genero + "%");
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                libros.add(new LibroDTO(
+                        rs.getString("titulo"),
+                        rs.getString("autor"),
+                        rs.getInt("año"),
+                        rs.getString("genero"),
+                        rs.getString("fechaLectura"),
+                        rs.getInt("usuarioId"),
+                        rs.getInt("IdLibro")
+                ));
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-        return libros;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+    return libros;
+}
 
-    public List<LibroDTO> filtrarPorAño(int año) {
-        List<LibroDTO> libros = new ArrayList<>();
-        String sql = "SELECT * FROM libros WHERE año=?";
-        try (Connection conn = dataBaseConfig.getInstance().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, año);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    libros.add(new LibroDTO(
-                            rs.getString("titulo"),
-                            rs.getString("autor"),
-                            rs.getInt("año"),
-                            rs.getString("genero"),
-                            rs.getString("fechaLectura"),
-                            rs.getInt("usuarioId")
-                    ));
-                }
+public List<LibroDTO> filtrarPorAño(int año) {
+    List<LibroDTO> libros = new ArrayList<>();
+    String sql = "SELECT * FROM libros WHERE año=?";
+    try (Connection conn = dataBaseConfig.getInstance().getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        stmt.setInt(1, año);
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                libros.add(new LibroDTO(
+                        rs.getString("titulo"),
+                        rs.getString("autor"),
+                        rs.getInt("año"),
+                        rs.getString("genero"),
+                        rs.getString("fechaLectura"),
+                        rs.getInt("usuarioId"),
+                        rs.getInt("IdLibro")
+                ));
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-        return libros;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+    return libros;
+}
+
+public void eliminarLibrosPorUsuario(int usuarioId) {
+    String sql = "DELETE FROM libros WHERE usuarioId = ?";
+    try (Connection conn = dataBaseConfig.getInstance().getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        stmt.setInt(1, usuarioId);
+        stmt.executeUpdate();
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+    
 }

@@ -26,7 +26,8 @@ public class FuenteExternaAdapter {
         Integer.parseInt(partes[2]), // año
         partes[3], // género
         partes[4], // fecha de lectura
-        0          // usuarioId por defecto
+        0,         // usuarioId por defecto
+        0          // idLibro por defecto
     );
     libros.add(libro);
 }

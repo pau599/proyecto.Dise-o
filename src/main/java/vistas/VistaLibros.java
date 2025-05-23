@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import repository.FavoritosRepositoryDB;
 import repository.LibroRepositoryDB;
 
 /**
@@ -24,6 +25,8 @@ import repository.LibroRepositoryDB;
 public class VistaLibros extends javax.swing.JFrame {
     private UsuarioDTO usuario;
     private LibroRepositoryDB libroRepo = new LibroRepositoryDB();
+    private FavoritosRepositoryDB favoritosRepo = new FavoritosRepositoryDB();
+
 
     /**
      * Creates new form VistaLibros
@@ -36,17 +39,23 @@ public class VistaLibros extends javax.swing.JFrame {
     
     private void cargarLibros() {
         List<LibroDTO> libros = libroRepo.obtenerTodosPorUsuario(usuario.getUsuarioId());
-        DefaultTableModel model = (DefaultTableModel) TablaLibros.getModel();
-        model.setRowCount(0);
-        for (LibroDTO libro : libros) {
-            model.addRow(new Object[]{
-                libro.getTitulo(),
-                libro.getAutor(),
-                libro.getAño(),
-                libro.getGenero(),
-                libro.getFechaLectura()
-            });
-        }
+    DefaultTableModel model = (DefaultTableModel) TablaLibros.getModel();
+    model.setRowCount(0);
+    for (LibroDTO libro : libros) {
+        model.addRow(new Object[]{
+            libro.getTitulo(),
+            libro.getAutor(),
+            libro.getAño(),
+            libro.getGenero(),
+            libro.getFechaLectura(), 
+        });
+    }
+    // Oculta la columna IdLibro
+    if (TablaLibros.getColumnCount() > 5) {
+        TablaLibros.getColumnModel().getColumn(5).setMinWidth(0);
+        TablaLibros.getColumnModel().getColumn(5).setMaxWidth(0);
+        TablaLibros.getColumnModel().getColumn(5).setWidth(0);
+    }
     }
 
     /**
@@ -76,6 +85,7 @@ public class VistaLibros extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         txtGenero = new javax.swing.JTextField();
         btnFavorito = new javax.swing.JButton();
+        btnConfiguracion = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -122,6 +132,11 @@ public class VistaLibros extends javax.swing.JFrame {
 
         btnVolver.setFont(new java.awt.Font("Perpetua", 1, 18)); // NOI18N
         btnVolver.setText("Volver");
+        btnVolver.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVolverActionPerformed(evt);
+            }
+        });
 
         jLabel2.setFont(new java.awt.Font("Perpetua", 2, 18)); // NOI18N
         jLabel2.setText("Titulo: ");
@@ -146,16 +161,26 @@ public class VistaLibros extends javax.swing.JFrame {
             }
         });
 
+        btnConfiguracion.setFont(new java.awt.Font("Perpetua", 1, 18)); // NOI18N
+        btnConfiguracion.setText("Configuración");
+        btnConfiguracion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnConfiguracionActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(83, 83, 83)
+                .addGap(16, 16, 16)
                 .addComponent(btnVolver)
+                .addGap(70, 70, 70)
+                .addComponent(btnConfiguracion)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnFavorito)
-                .addGap(84, 84, 84))
+                .addGap(48, 48, 48))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 463, Short.MAX_VALUE)
@@ -228,11 +253,12 @@ public class VistaLibros extends javax.swing.JFrame {
                     .addComponent(txtGenero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(44, 44, 44)
+                .addGap(39, 39, 39)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnVolver)
-                    .addComponent(btnFavorito))
-                .addGap(15, 15, 15))
+                    .addComponent(btnFavorito)
+                    .addComponent(btnConfiguracion, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(11, 11, 11))
         );
 
         pack();
@@ -252,7 +278,7 @@ public class VistaLibros extends javax.swing.JFrame {
         DateTimeFormatter salida = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String fechaLectura = LocalDate.parse(fechaLecturaUsuario, entrada).format(salida);
 
-        LibroDTO libro = new LibroDTO(titulo, autor, año, genero, fechaLectura, usuario.getUsuarioId());
+        LibroDTO libro = new LibroDTO(titulo, autor, año, genero, fechaLectura, usuario.getUsuarioId(), 0);
         libroRepo.agregarLibro(libro);
         cargarLibros();
         JOptionPane.showMessageDialog(this, "Libro agregado correctamente");
@@ -306,7 +332,7 @@ public class VistaLibros extends javax.swing.JFrame {
                 libro.setAutor(nuevoAutor);
                 libro.setAño(nuevoAño);
                 libro.setGenero(nuevoGenero);
-                libro.setFechaLectura(nuevaFechaLectura);
+                libro.setFechaLectura(nuevaFechaLecturaMySQL);
 
                 libroRepo.actualizarLibro(libro);
                 break;
@@ -341,13 +367,54 @@ public class VistaLibros extends javax.swing.JFrame {
     private void btnFavoritoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFavoritoActionPerformed
         // TODO add your handling code here:
         int fila = TablaLibros.getSelectedRow();
-    if (fila == -1) {
-        JOptionPane.showMessageDialog(this, "Selecciona un libro para marcar como favorito.");
-        return;
-    }
-    String titulo = TablaLibros.getValueAt(fila, 0).toString();
-    JOptionPane.showMessageDialog(this, "¡Marcaste como favorito el libro: " + titulo + "!");
+        if (fila == -1) {
+            JOptionPane.showMessageDialog(this, "Selecciona un libro para marcar como favorito.");
+            return;
+        }
+        String titulo = TablaLibros.getValueAt(fila, 0).toString();
+        String autor = TablaLibros.getValueAt(fila, 1).toString();
+        int año = Integer.parseInt(TablaLibros.getValueAt(fila, 2).toString());
+        String genero = TablaLibros.getValueAt(fila, 3).toString();
+        String fechaLectura = TablaLibros.getValueAt(fila, 4).toString();
+
+        // Busca el libro en la base de datos
+        List<LibroDTO> libros = libroRepo.buscarPorTitulo(titulo);
+        for (LibroDTO libro : libros) {
+            if (
+                libro.getAutor().equals(autor) &&
+                libro.getAño() == año &&
+                libro.getGenero().equals(genero) &&
+                libro.getFechaLectura().equals(fechaLectura) &&
+                libro.getUsuarioId() == usuario.getUsuarioId()
+            ) {
+                favoritosRepo.agregarFavorito(usuario.getUsuarioId(), libro.getIdLibro());
+                JOptionPane.showMessageDialog(this, "¡Libro agregado a favoritos!");
+
+                VistaLibroFavoritos vistaFavoritos = new VistaLibroFavoritos(usuario);
+                vistaFavoritos.setVisible(true);
+                this.dispose();
+                return;
+            }
+        }
+        JOptionPane.showMessageDialog(this, "No se pudo encontrar el libro para marcar como favorito.");
+
+
     }//GEN-LAST:event_btnFavoritoActionPerformed
+
+    private void btnConfiguracionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfiguracionActionPerformed
+        // TODO add your handling code here:
+        VentanaConfiguracion vistaConfig = new VentanaConfiguracion(usuario);
+        vistaConfig.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnConfiguracionActionPerformed
+
+    private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
+        // TODO add your handling code here:
+        
+        Inicio login = new Inicio();
+        login.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnVolverActionPerformed
 
     /**
      * @param args the command line arguments
@@ -356,6 +423,7 @@ public class VistaLibros extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable TablaLibros;
     private javax.swing.JButton btnAgregar;
+    private javax.swing.JButton btnConfiguracion;
     private javax.swing.JButton btnEditar;
     private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnFavorito;

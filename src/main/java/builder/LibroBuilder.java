@@ -18,6 +18,7 @@ public class LibroBuilder {
     private String genero;
     private String fechaLectura;
     private int usuarioId;
+    private int idLibro = 0; 
 
     public LibroBuilder setUsuarioId(int usuarioId) {
         this.usuarioId = usuarioId;
@@ -25,7 +26,7 @@ public class LibroBuilder {
     }
 
     public LibroDTO build() {
-        return new LibroDTO(titulo, autor, año, genero, fechaLectura, usuarioId);
+        return new LibroDTO(titulo, autor, año, genero, fechaLectura, usuarioId, idLibro);
     }
 
     public LibroBuilder setTitulo(String titulo) {

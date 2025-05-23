@@ -11,14 +11,16 @@ public class LibroDTO {
     private String genero;
     private String fechaLectura;
     private int usuarioId;
+    private int idLibro;
 
-    public LibroDTO(String titulo, String autor, int año, String genero, String fechaLectura, int usuarioId) {
+    public LibroDTO(String titulo, String autor, int año, String genero, String fechaLectura, int usuarioId, int idLibro) {
         this.titulo = titulo;
         this.autor = autor;
         this.año = año;
         this.genero = genero;
         this.fechaLectura = fechaLectura;
         this.usuarioId= usuarioId;
+        this.idLibro = idLibro;
     }
 
     public String getTitulo() {
@@ -68,6 +70,16 @@ public class LibroDTO {
     public void setUsuarioId(int usuarioId) {
         this.usuarioId = usuarioId;
     }
+
+    public int getIdLibro() {
+        return idLibro;
+    }
+
+    public void setIdLibro(int idLibro) {
+        this.idLibro = idLibro;
+    }
+    
+    
     
     
 }
